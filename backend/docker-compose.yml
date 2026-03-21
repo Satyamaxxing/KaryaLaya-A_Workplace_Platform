@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    container_name: backend-db-1
+    environment:
+      POSTGRES_DB: hackdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  backend:
+    build: .
+    image: backend-backend
+    container_name: backend-backend-1
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://postgres:postgres@db:5432/hackdb
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+volumes:
+  pgdata:
