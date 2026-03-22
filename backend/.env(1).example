@@ -1,3 +1,0 @@
-# Example env (copy to .env and edit if needed)
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hackdb
-PORT=8000

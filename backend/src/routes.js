@@ -1,4 +1,3 @@
-
 // backend/src/routes.js
 const bcrypt = require("bcryptjs");
 
@@ -86,7 +85,6 @@ module.exports.attachRoutes = function (app, pool) {
       );
 
       if (result.rowCount === 0) {
-        // user already exists
         const existing = await pool.query(
           "SELECT id, name, email FROM users WHERE email=$1",
           [email]
@@ -101,6 +99,7 @@ module.exports.attachRoutes = function (app, pool) {
     }
   });
 
+  // ── UPDATED: avatar_url bhi return karta hai ──
   app.post("/api/auth/signin", async (req, res) => {
     const { email, password } = req.body || {};
     if (!email || !password) {
@@ -114,10 +113,33 @@ module.exports.attachRoutes = function (app, pool) {
       const ok = await bcrypt.compare(password, user.password || "");
       if (!ok) return res.status(401).json({ error: "Invalid credentials" });
 
-      res.json({ id: user.id, name: user.name, email: user.email });
+      res.json({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatar_url: user.avatar_url || null,
+      });
     } catch (e) {
       console.error("❌ Signin error:", e);
       res.status(500).json({ error: "Signin failed" });
+    }
+  });
+
+  // ── NEW: avatar URL database mein save karo ──
+  app.post("/api/auth/update-avatar", async (req, res) => {
+    const { email, avatar_url } = req.body || {};
+    if (!email || !avatar_url) {
+      return res.status(400).json({ error: "Email and avatar_url required" });
+    }
+    try {
+      await pool.query(
+        "UPDATE users SET avatar_url=$1 WHERE email=$2",
+        [avatar_url, email]
+      );
+      res.json({ success: true, avatar_url });
+    } catch (e) {
+      console.error("❌ Avatar update error:", e);
+      res.status(500).json({ error: "Avatar update failed" });
     }
   });
 
