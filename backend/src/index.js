@@ -11,13 +11,15 @@ const PORT = Number(process.env.PORT || 8000);
 async function start() {
   const app = express();
 
-  // ✅ CORS
+  // ✅ FIXED CORS (LOCAL + VERCEL)
   app.use(
     cors({
       origin: [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:3001",
+        "https://karya-laya.vercel.app", // 🔥 VERCEL ADD
+        "https://karyalaya.vercel.app",  // (backup if diff url)
       ],
       credentials: true,
     })
@@ -25,7 +27,7 @@ async function start() {
 
   app.use(express.json());
 
-  // 🔥🔥🔥 ROOT ROUTE ADD KIYA (IMPORTANT)
+  // ✅ ROOT ROUTE
   app.get("/", (req, res) => {
     res.send("🚀 KaryaLaya Backend is running successfully!");
   });
