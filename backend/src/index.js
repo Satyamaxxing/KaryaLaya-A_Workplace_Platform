@@ -11,13 +11,13 @@ const PORT = Number(process.env.PORT || 8000);
 async function start() {
   const app = express();
 
-  // ✅ FIXED CORS (added 3001)
+  // ✅ CORS
   app.use(
     cors({
       origin: [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "http://localhost:3001", // 🔥 THIS WAS MISSING
+        "http://localhost:3001",
       ],
       credentials: true,
     })
@@ -25,9 +25,16 @@ async function start() {
 
   app.use(express.json());
 
+  // 🔥🔥🔥 ROOT ROUTE ADD KIYA (IMPORTANT)
+  app.get("/", (req, res) => {
+    res.send("🚀 KaryaLaya Backend is running successfully!");
+  });
+
   try {
     const pool = await initDB();
+
     await seed();
+
     attachRoutes(app, pool);
 
     const server = app.listen(PORT, () => {
