@@ -10,8 +10,15 @@ const PORT = Number(process.env.PORT || 8000);
 async function start() {
   const app = express();
 
-  // 🔥 FINAL CORS FIX (NO POPUP, NO FAILED FETCH)
-  app.use(cors()); // simple & best for now
+  // 🔥 ULTIMATE CORS FIX (PHONE + VERCEL + EVERYTHING)
+  app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }));
+
+  // 🔥 HANDLE PREFLIGHT (IMPORTANT FOR PHONE)
+  app.options("*", cors());
 
   app.use(express.json());
 
